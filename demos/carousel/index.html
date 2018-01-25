@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>lb</title>
+	<style>
+		#my-slider{
+			height: 340px;
+			position: relative;
+		}
+		.slider-list ul{
+			list-style: none;
+			position: relative;
+			width: 100%;
+			height: 100%;
+			padding: 0;
+			margin: 0;
+		}
+		.slider-item ,.slider-item-selected{
+			position: absolute;
+			opacity: 0;
+			transition: opacity 1s;
+		}
+		.slider-item-selected{
+			opacity: 1;
+			transition: opacity 1s;
+		}
+		.slider-control{
+			position: absolute;
+			white-space: nowrap;
+			bottom: 0;
+		}
+		.slider-control-selected,.slider-control-btn{
+			display: inline-block;
+			height: 30px;
+			width: 30px;
+			border-radius: 50%;
+			background: #fff;
+			cursor: pointer;
+		}
+		.slider-control-selected{
+			background: red;
+		}
+		.slider-control{
+			background: #999;
+			opacity: .6;
+			padding: 3px;
+			border-radius: 100px;
+		}
+	</style>
+</head>
+<body>
+	<div class="slider-list" id="my-slider"> 
+		<ul>
+			<li class="slider-item-selected"><img src="img/5819c25dNa4750922.jpg" alt=""></li>
+			<li class="slider-item"><img src="img/58c607feN26123dea.jpg" alt=""></li>
+			<li class="slider-item"><img src="img/58c26a4fN95e2e659.jpg" alt=""></li>
+			<li class="slider-item"><img src="img/58c66d49Nbff24246.jpg" alt=""></li>
+		</ul>
+		<div class="slider-control">
+			<span class="slider-control-selected"></span>
+			<span class="slider-control-btn"></span>
+			<span class="slider-control-btn"></span>
+			<span class="slider-control-btn"></span>
+		</div>
+	</div>
+<script>
+	function Slide(id,time) {
+		this.id = id;
+		this.time = time;
+		var slide = document.getElementById(this.id);
+		var slideItem = slide.querySelectorAll('.slider-item-selected,.slider-item');
+		var control = slide.querySelector('.slider-control');
+		var controlBtn = slide.querySelectorAll('.slider-control-selected,.slider-control-btn');
+		var currentItem;
+		var index = 0;
+		var timer;
+		var self = this;
+		self.getCurrentIndex = function() {	
+			currentItem = slide.querySelector('.slider-item-selected');
+			return Array.from(slideItem).indexOf(currentItem)
+		}
+		self.move = function() {
+			if(self.getCurrentIndex()+1< slideItem.length) {
+				slideItem[self.getCurrentIndex()+1].className = 'slider-item-selected';
+				slideItem[self.getCurrentIndex()].className = 'slider-item';
+				controlBtn[self.getCurrentIndex()].className = 'slider-control-selected';
+				controlBtn[self.getCurrentIndex()-1].className = 'slider-control-btn'
+
+			}else{
+				slideItem[self.getCurrentIndex()].className = 'slider-item';
+				slideItem[0].className = 'slider-item-selected';
+				controlBtn[0].className = 'slider-control-selected';
+				controlBtn[slideItem.length-1].className = 'slider-control-btn'
+			}
+		}
+		self.start = function() {
+			timer = setInterval(function(){
+				self.move()
+			},this.time)
+		}
+		self.stop = function() {
+			clearInterval(timer)
+		}
+		self.moveTo=function(x) {
+			self.stop();
+			if(x>=0) {
+				controlBtn[self.getCurrentIndex()].className = 'slider-control-btn'
+				slideItem[self.getCurrentIndex()].className = 'slider-item';
+				slideItem[x].className = 'slider-item-selected';
+				controlBtn[x].className = 'slider-control-selected';
+			}
+		}
+		self.nextSlide = function() {
+			// 下一页
+		}
+		self.preSlide = function() {
+			// 上一页
+		}
+		control.addEventListener('mouseover',function(evt){			
+			if(Array.from(controlBtn).indexOf(evt.target) >= 0) {
+				var x = Array.from(controlBtn).indexOf(evt.target);
+				self.stop();
+				self.moveTo(x);	
+			}
+		})
+		control.addEventListener('mouseout',function() {
+			self.stop();
+			self.start();
+		})
+	}
+	var slide = new Slide('my-slider',3000)
+	slide.start();
+</script>
+</body>
+</html>
